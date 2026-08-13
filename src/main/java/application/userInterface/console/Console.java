@@ -13,7 +13,7 @@ import application.userInterface.console.output.Output;
 public class Console implements UserInterface {
     Input input;
     Output output;
-    TextModifier modifier;
+
 
     @Override
     public void displayMessage(MessageType msgType, String message) {
