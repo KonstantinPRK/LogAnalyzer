@@ -15,5 +15,5 @@ public class ProcessorReporter implements ProcessorComponent{
     public void process(ProcessorContext context) {
 
     }
-    // выдача отчета // формат уже провалидирован на самом начале
+
 }

@@ -6,7 +6,7 @@ import application.components.reporting.Reporter;
 
 import java.util.Set;
 
-//хранилище отчетов
+
 public class LogReporter implements Reporter {
     private String format;
 

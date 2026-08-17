@@ -15,5 +15,5 @@ public class ProcessorDataCollector implements ProcessorComponent {
     public void process(ProcessorContext context) {
 
     }
-    // подкапотная валидация каждого лога и агрегация данных определение количества логов неизвестного формата и сколько из них проанализировано
+
 }

@@ -7,6 +7,4 @@ public enum ProcessingStage {
     LOG_ANALYSIS,
     REPORT_GENERATION;
 
-    // Если в будущем добавится новый компонент,
-    // его просто вставляют в нужное место в этом списке.
 }
