@@ -23,11 +23,11 @@ public final class LogAnalysisTaskFactory {
 
 
     public LogAnalysisTaskFactory(LoaderFactory loaderFactory, DateValidatorFactory dateValidatorFactory, ReporterFactory reporterFactory, AggregatorFactory aggregatorFactory, LogParser<NGINXlog> logParser) {
-        this.loaderFactory = Objects.requireNonNull(loaderFactory, "loaderFactory");
-        this.dateValidatorFactory = Objects.requireNonNull(dateValidatorFactory, "dateValidatorFactory");
-        this.reporterFactory = Objects.requireNonNull(reporterFactory, "reporterFactory");
-        this.aggregatorFactory = Objects.requireNonNull(aggregatorFactory, "aggregatorFactory");
-        this.logParser = Objects.requireNonNull(logParser, "logParser");
+        this.loaderFactory = loaderFactory;
+        this.dateValidatorFactory = dateValidatorFactory;
+        this.reporterFactory = reporterFactory;
+        this.aggregatorFactory = aggregatorFactory;
+        this.logParser = logParser;
     }
 
 

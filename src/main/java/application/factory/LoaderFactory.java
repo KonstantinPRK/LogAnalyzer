@@ -20,9 +20,9 @@ public final class LoaderFactory {
 
 
     public LoaderFactory(FileSourceParser fileSourceParser, UrlSourceParser urlSourceParser, HttpClient httpClient) {
-        this.fileSourceParser = Objects.requireNonNull(fileSourceParser, "fileSourceParser");
-        this.urlSourceParser = Objects.requireNonNull(urlSourceParser, "urlSourceParser");
-        this.httpClient = Objects.requireNonNull(httpClient, "httpClient");
+        this.fileSourceParser = fileSourceParser;
+        this.urlSourceParser = urlSourceParser;
+        this.httpClient = httpClient;
     }
 
 

@@ -21,11 +21,11 @@ public final class LogAnalysisTask implements Callable<Report> {
 
 
     public LogAnalysisTask(Loader loader, LogParser<NGINXlog> logParser, DateValidator dateValidator, Aggregator<NGINXlog> aggregator, Reporter reporter) {
-        this.loader = Objects.requireNonNull(loader, "loader");
-        this.logParser = Objects.requireNonNull(logParser, "logParser");
-        this.dateValidator = Objects.requireNonNull(dateValidator, "dateValidator");
-        this.aggregator = Objects.requireNonNull(aggregator, "aggregator");
-        this.reporter = Objects.requireNonNull(reporter, "reporter");
+        this.loader = loader;
+        this.logParser = logParser;
+        this.dateValidator = dateValidator;
+        this.aggregator = aggregator;
+        this.reporter = reporter;
     }
 
 

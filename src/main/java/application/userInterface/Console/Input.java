@@ -3,7 +3,6 @@ package application.userInterface.Console;
 import application.errorhandling.exceptions.InputClosedException;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 import java.util.Scanner;
 
 @Component
@@ -13,7 +12,7 @@ public final class Input {
 
 
     public Input(Scanner scanner) {
-        this.scanner = Objects.requireNonNull(scanner, "scanner");
+        this.scanner = scanner;
     }
 
 

@@ -14,7 +14,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class UrlLoader implements Loader {
@@ -31,10 +30,10 @@ public final class UrlLoader implements Loader {
 
 
     public UrlLoader(String source, SourceParser<URI> sourceParser, HttpClient httpClient, Charset charset) {
-        this.source = Objects.requireNonNull(source, "source");
-        this.sourceParser = Objects.requireNonNull(sourceParser, "sourceParser");
-        this.httpClient = Objects.requireNonNull(httpClient, "httpClient");
-        this.charset = Objects.requireNonNull(charset, "charset");
+        this.source = source;
+        this.sourceParser = sourceParser;
+        this.httpClient = httpClient;
+        this.charset = charset;
     }
 
 

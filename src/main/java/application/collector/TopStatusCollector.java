@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public final class TopStatusCollector implements Collector<NGINXlog, Map<Integer, Long>> {
     private final Map<Integer, Long> statusCounts = new HashMap<>();
@@ -14,7 +13,6 @@ public final class TopStatusCollector implements Collector<NGINXlog, Map<Integer
 
     @Override
     public void accept(NGINXlog log) {
-        Objects.requireNonNull(log, "log");
         statusCounts.merge(log.status(), 1L, Long::sum);
     }
 

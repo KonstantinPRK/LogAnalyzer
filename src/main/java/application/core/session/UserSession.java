@@ -5,7 +5,6 @@ import application.parser.commandParser.Command;
 import application.reporter.Report;
 import application.userInterface.UserInterface;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class UserSession {
@@ -15,16 +14,12 @@ public final class UserSession {
 
 
     public UserSession(String id, UserInterface userInterface) {
-        Objects.requireNonNull(id, "id");
         if (id.isBlank()) {
             throw new IllegalArgumentException("Идентификатор сессии не задан");
         }
 
         this.id = id;
-        this.userInterface = Objects.requireNonNull(
-                userInterface,
-                "userInterface"
-        );
+        this.userInterface = userInterface;
     }
 
 
@@ -42,10 +37,7 @@ public final class UserSession {
         ensureOpen();
 
         try {
-            return Objects.requireNonNull(
-                    userInterface.requestCommand(),
-                    "Пользовательский интерфейс вернул null вместо команды"
-            );
+            return userInterface.requestCommand();
         } catch (InputClosedException exception) {
             close();
             throw exception;
@@ -54,16 +46,12 @@ public final class UserSession {
 
 
     public void displayReport(Report report) {
-        userInterface.displayReport(
-                Objects.requireNonNull(report, "report")
-        );
+        userInterface.displayReport(report);
     }
 
 
     public void displayError(Exception exception) {
-        userInterface.displayError(
-                Objects.requireNonNull(exception, "exception")
-        );
+        userInterface.displayError(exception);
     }
 
 

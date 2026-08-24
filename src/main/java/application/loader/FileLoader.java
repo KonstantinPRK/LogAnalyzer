@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class FileLoader implements Loader {
@@ -24,9 +23,9 @@ public final class FileLoader implements Loader {
 
 
     public FileLoader(String source, SourceParser<List<Path>> sourceParser, Charset charset) {
-        this.source = Objects.requireNonNull(source, "source");
-        this.sourceParser = Objects.requireNonNull(sourceParser, "sourceParser");
-        this.charset = Objects.requireNonNull(charset, "charset");
+        this.source = source;
+        this.sourceParser = sourceParser;
+        this.charset = charset;
     }
 
 

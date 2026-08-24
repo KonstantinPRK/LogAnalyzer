@@ -2,8 +2,6 @@ package application.userInterface.Console;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 public final class Terminal {
     private static final String COMMAND_REQUEST = "Введите команду, например:", COMMAND_EXAMPLE = "--path logs/*.log --from 2024-08-31 --format markdown", COMMAND_PROMPT = "> ", EMPTY_COMMAND_ERROR = "Ошибка: команда не может быть пустой";
@@ -12,8 +10,8 @@ public final class Terminal {
 
 
     public Terminal(Input input, Output output) {
-        this.input = Objects.requireNonNull(input, "input");
-        this.output = Objects.requireNonNull(output, "output");
+        this.input = input;
+        this.output = output;
     }
 
 
@@ -35,11 +33,11 @@ public final class Terminal {
 
 
     public void printReport(String formattedReport) {
-        output.println(Objects.requireNonNull(formattedReport, "formattedReport"));
+        output.println(formattedReport);
     }
 
 
     public void printError(String message) {
-        output.printlnError(Objects.requireNonNull(message, "message"));
+        output.printlnError(message);
     }
 }

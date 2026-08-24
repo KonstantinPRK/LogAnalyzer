@@ -9,8 +9,6 @@ import application.core.session.UserSession;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 public final class LogAnalyzerService {
     private final UserSession session;
@@ -18,8 +16,8 @@ public final class LogAnalyzerService {
 
 
     public LogAnalyzerService(UserSession session, LogAnalysisTaskFactory analysisTaskFactory) {
-        this.session = Objects.requireNonNull(session, "session");
-        this.analysisTaskFactory = Objects.requireNonNull(analysisTaskFactory, "analysisTaskFactory");
+        this.session = session;
+        this.analysisTaskFactory = analysisTaskFactory;
     }
 
 

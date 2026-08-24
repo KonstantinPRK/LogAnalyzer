@@ -12,7 +12,6 @@ public final class MarkDownReporter implements Reporter {
 
     @Override
     public Report create(Map<String, ?> statistics) {
-        Objects.requireNonNull(statistics, "statistics");
         StringBuilder report = new StringBuilder();
         appendScalarMetrics(report, statistics);
         appendMapMetrics(report, statistics);

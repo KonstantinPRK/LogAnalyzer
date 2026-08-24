@@ -6,16 +6,14 @@ import application.reporter.MarkDownReporter;
 import application.reporter.Reporter;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 public final class ReporterFactory {
     private final Reporter markDownReporter, asciiDocReporter;
 
 
     public ReporterFactory(MarkDownReporter markDownReporter, AsciiDocReporter asciiDocReporter) {
-        this.markDownReporter = Objects.requireNonNull(markDownReporter, "markDownReporter");
-        this.asciiDocReporter = Objects.requireNonNull(asciiDocReporter, "asciiDocReporter");
+        this.markDownReporter = markDownReporter;
+        this.asciiDocReporter = asciiDocReporter;
     }
 
 

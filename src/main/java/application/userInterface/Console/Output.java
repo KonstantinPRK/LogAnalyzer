@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintStream;
-import java.util.Objects;
 
 @Component
 public final class Output {
@@ -12,24 +11,24 @@ public final class Output {
 
 
     public Output(@Qualifier("consoleOutput") PrintStream output) {
-        this.output = Objects.requireNonNull(output, "output");
+        this.output = output;
     }
 
 
     public void print(String text) {
-        output.print(Objects.requireNonNull(text, "text"));
+        output.print(text);
         output.flush();
     }
 
 
     public void println(String text) {
-        output.println(Objects.requireNonNull(text, "text"));
+        output.println(text);
         output.flush();
     }
 
 
     public void printlnError(String text) {
-        output.println(Objects.requireNonNull(text, "text"));
+        output.println(text);
         output.flush();
     }
 }

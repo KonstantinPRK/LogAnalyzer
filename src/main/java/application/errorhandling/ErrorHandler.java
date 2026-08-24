@@ -13,15 +13,11 @@ public final class ErrorHandler {
 
 
     public ErrorHandler(List<ErrorInterceptor> interceptors) {
-        this.interceptors = List.copyOf(
-                Objects.requireNonNull(interceptors, "interceptors")
-        );
+        this.interceptors = List.copyOf(interceptors);
     }
 
 
     public String handle(Exception exception) {
-        Objects.requireNonNull(exception, "exception");
-
         Throwable current = exception;
         while (current instanceof Exception currentException) {
             Optional<String> message = intercept(currentException);
