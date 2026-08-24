@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class CommandParser {
 
-    public SeparatedCommand parse(String command) {
+    public UserParameters parse(String command) {
         String cleanCommand = command.trim();
 
         String source = extractParameter(cleanCommand, "--path");
@@ -17,7 +17,7 @@ public class CommandParser {
         String toDate = extractParameter(cleanCommand, "--to");
         String reportFormat = extractParameter(cleanCommand, "--format");
 
-        return new SeparatedCommand(source, fromDate, toDate, reportFormat);
+        return new UserParameters(source, fromDate, toDate, reportFormat);
     }
 
     private String extractParameter(String command, String paramName) {

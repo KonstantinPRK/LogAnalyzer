@@ -1,7 +1,7 @@
 import java.nio.file.Path;
 import java.time.LocalDate;
 
-public record SeparatedCommand (
+public record UserParameters (
         String source,
         String fromDate,
         String toDate,

@@ -1,16 +1,21 @@
+import org.springframework.stereotype.Component;
+
+@Component
 public class AnalizatorBuilder {
     LoaderFactory loaderFactory = new LoaderFactory();
     DateValidatorFactory dateValidatorFactory = new DateValidatorFactory();
     ReporterFactory reporterFactory = new ReporterFactory();
-    AggregatorFactory aggregatorFactory = new AggregatorFactory();
 
-    public Analizator createAnalizator(SeparatedCommand command) {
-        Loader loader = loaderFactory.create(command.source());
-        DateChecker dateChecker = dateValidatorFactory.create(command.fromDate(), command.toDate());
-        Aggregator aggregator = aggregatorFactory.create();
-        Reporter reporter = reporterFactory.create(command.reportFormat());
 
-        return new Analizator(loader, dateChecker, aggregator, reporter);
+    public Analizator createAnalizator(UserParameters userParameters, SystemParameters systemParameters) {
+        Loader loader = loaderFactory.create(userParameters.source());
+        DateChecker dateChecker = dateValidatorFactory.create(userParameters.fromDate(), userParameters.toDate());
+        Reporter reporter = reporterFactory.create(userParameters.reportFormat());
+
+        Aggregator aggregator = systemParameters.aggregator();
+        Collector collector = systemParameters.logCollector();
+
+        return new Analizator(loader, dateChecker, aggregator, collector, reporter);
     }
 
 

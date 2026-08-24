@@ -2,18 +2,24 @@
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LogAnalyzer {
     Scanner scan = new Scanner(System.in);
     CommandParser commandParser = new CommandParser();
-    AnalizatorFactory analizatorFactory = new AnalizatorFactory();
+    AnalizatorBuilder analizatorBuilder = new AnalizatorBuilder();
+
 
 
     public void start(){
-       String line = request();
-       SeparatedCommand separatedCommandParameters = commandParser.parse(line);
-       Analizator analizator = analizatorFactory.createAnalizator(separatedCommandParameters);
+       String command = request();
+       UserParameters userParameters = commandParser.parse(command);
+       SystemParameters systemParameters = new SystemParameters(new StatisticAggregator(), new CallCollector(), new NGINXparser());
+       Analizator analizator = analizatorBuilder.createAnalizator(userParameters, systemParameters);
+
+        analizator.run();
     }
 
     private String request() {
@@ -22,4 +28,6 @@ public class LogAnalyzer {
         System.out.print("> ");
         return scan.nextLine().trim(); // с удалением пробелов
     }
+
+
 }
