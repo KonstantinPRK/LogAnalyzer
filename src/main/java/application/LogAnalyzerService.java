@@ -1,56 +1,50 @@
 package application;
 
-
-import application.core.analysis.Analizator;
-import application.core.analysis.AnalizatorBuilder;
+import application.core.analysis.LogAnalysisTask;
+import application.factory.LogAnalysisTaskFactory;
+import application.parser.commandParser.Command;
+import application.reporter.Report;
 import application.core.session.UserSession;
 
-import application.core.setting.SystemParameters;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
-import java.util.Scanner;
+import java.util.Objects;
 
 @Component
-public class LogAnalyzerService {
-    UserSession session;
-    AnalizatorBuilder analizatorBuilder;
+public final class LogAnalyzerService {
+    private final UserSession session;
+    private final LogAnalysisTaskFactory analysisTaskFactory;
 
 
-    public LogAnalyzerService(AnalizatorBuilder analizatorBuilder){
-        this.analizatorBuilder = analizatorBuilder;
+    public LogAnalyzerService(UserSession session, LogAnalysisTaskFactory analysisTaskFactory) {
+        this.session = Objects.requireNonNull(session, "session");
+        this.analysisTaskFactory = Objects.requireNonNull(analysisTaskFactory, "analysisTaskFactory");
     }
 
 
     @PostConstruct
-    public void start(){
-       analyzeInteraction();
+    public void start() {
+        runSession(session);
     }
 
-    private void analyzeInteraction() {
-        while(session.isOpen()){
-            requestCommand(session);
+
+    private void runSession(UserSession session) {
+        while (session.isOpen()) {
             analyze(session);
-            displayReport(session);
         }
     }
 
 
-
-
-    private void requestCommand(UserSession session){
-        session.requestCommand();
-    }
-
     private void analyze(UserSession session) {
-        Analizator analizator = analizatorBuilder.createAnalizator(session.getCommand());
-        analizator.run();
+        try {
+            Command command = session.requestCommand();
+            LogAnalysisTask analysisTask = analysisTaskFactory.create(command);
+            Report report = analysisTask.call();
 
+            session.displayReport(report);
+        } catch (Exception exception) {
+            session.displayError(exception);
+        }
     }
-
-    private void displayReport(UserSession session) {
-    }
-
-
-
 }

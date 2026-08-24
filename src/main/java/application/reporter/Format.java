@@ -1,10 +1,24 @@
 package application.reporter;
 
+import application.errorhandling.exceptions.CommandParsingException;
+
+import java.util.Objects;
+
 public enum Format {
-    MARKDOWN, ADOC, TEXT;
+    MARKDOWN,
+    ADOC;
 
     public static Format fromString(String format) {
-        if (format == null) return null;
-        return Format.valueOf(format.trim().toUpperCase());
+        if (Objects.isNull(format) || format.isBlank()) {
+            return MARKDOWN;
+        }
+
+        return switch (format.trim().toLowerCase()) {
+            case "markdown", "md" -> MARKDOWN;
+            case "adoc", "asciidoc" -> ADOC;
+            default -> throw new CommandParsingException(
+                    "Неподдерживаемый формат отчёта: " + format
+            );
+        };
     }
 }

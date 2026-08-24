@@ -1,35 +1,47 @@
 package application.loader;
 
+import application.errorhandling.exceptions.LogLoadingException;
+import application.parser.sourceParser.SourceParser;
+
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class FileLoader implements Loader {
+public final class FileLoader implements Loader {
+    private final String source;
+    private final SourceParser<List<Path>> sourceParser;
+    private final Charset charset;
+
+
+    public FileLoader(String source, SourceParser<List<Path>> sourceParser) {
+        this(source, sourceParser, StandardCharsets.UTF_8);
+    }
+
+
+    public FileLoader(String source, SourceParser<List<Path>> sourceParser, Charset charset) {
+        this.source = Objects.requireNonNull(source, "source");
+        this.sourceParser = Objects.requireNonNull(sourceParser, "sourceParser");
+        this.charset = Objects.requireNonNull(charset, "charset");
+    }
+
+
     @Override
-    public List<Path> getPaths(String idealPath, String s) {
-        Path startPath = Paths.get(idealPath);
+    public Stream<String> load() {
+        List<Path> paths = sourceParser.parse(source);
+        return paths.stream().flatMap(this::readLines);
+    }
 
-        // Проверяем, существует ли путь и является ли он папкой
-        if (!Files.exists(startPath) || !Files.isDirectory(startPath)) {
-            return null;
-        }
 
-        try (Stream<Path> stream = Files.walk(startPath)) {
-            List<Path> result = stream
-                    // Оставляем только файлы (игнорируем папки)
-                    .filter(Files::isRegularFile)
-                    // Проверяем, заканчивается ли имя файла на нужное расширение (например, .txt)
-                    .filter(path -> path.toString().endsWith(s))
-                    .collect(Collectors.toList());
-
-            // Если ничего не нашли, возвращаем null, как в условии
-            return result.isEmpty() ? null : result;
-
-        } catch (IOException e) {
-            // В случае ошибки ввода-вывода возвращаем null
-            return null;
+    private Stream<String> readLines(Path path) {
+        try {
+            return Files.lines(path, charset);
+        } catch (IOException exception) {
+            throw new LogLoadingException("Не удалось открыть лог-файл: " + path, exception);
         }
     }
 }

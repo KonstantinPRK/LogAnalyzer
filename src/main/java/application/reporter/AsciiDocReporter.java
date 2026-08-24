@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-public final class MarkDownReporter implements Reporter {
+public final class AsciiDocReporter implements Reporter {
     private static final String EMPTY_VALUE = "-";
 
 
@@ -21,9 +21,10 @@ public final class MarkDownReporter implements Reporter {
 
 
     private void appendScalarMetrics(StringBuilder report, Map<String, ?> statistics) {
-        report.append("#### Общая информация\n\n")
-                .append("| Метрика | Значение |\n")
-                .append("|:--|--:|\n");
+        report.append("=== Общая информация\n\n")
+                .append("[cols=\"1,1\", options=\"header\"]\n")
+                .append("|===\n")
+                .append("|Метрика |Значение\n");
 
         boolean hasScalarMetrics = false;
         for (Map.Entry<String, ?> entry : statistics.entrySet()) {
@@ -32,16 +33,16 @@ public final class MarkDownReporter implements Reporter {
             }
 
             hasScalarMetrics = true;
-            report.append("| ")
-                    .append(escape(entry.getKey()))
-                    .append(" | ")
-                    .append(escape(valueOf(entry.getValue())))
-                    .append(" |\n");
+            report.append('|').append(escape(entry.getKey()))
+                    .append("\n|").append(escape(valueOf(entry.getValue())))
+                    .append('\n');
         }
 
         if (!hasScalarMetrics) {
-            report.append("| ").append(EMPTY_VALUE).append(" | ").append(EMPTY_VALUE).append(" |\n");
+            report.append('|').append(EMPTY_VALUE).append("\n|").append(EMPTY_VALUE).append('\n');
         }
+
+        report.append("|===\n");
     }
 
 
@@ -51,24 +52,22 @@ public final class MarkDownReporter implements Reporter {
                 continue;
             }
 
-            report.append("\n#### ")
-                    .append(escape(metric.getKey()))
-                    .append("\n\n")
-                    .append("| Значение | Количество |\n")
-                    .append("|:--|--:|\n");
+            report.append("\n=== ").append(escape(metric.getKey())).append("\n\n")
+                    .append("[cols=\"1,1\", options=\"header\"]\n")
+                    .append("|===\n")
+                    .append("|Значение |Количество\n");
 
             if (values.isEmpty()) {
-                report.append("| ").append(EMPTY_VALUE).append(" | 0 |\n");
-                continue;
+                report.append('|').append(EMPTY_VALUE).append("\n|0\n");
+            } else {
+                for (Map.Entry<?, ?> value : values.entrySet()) {
+                    report.append('|').append(escape(valueOf(value.getKey())))
+                            .append("\n|").append(escape(valueOf(value.getValue())))
+                            .append('\n');
+                }
             }
 
-            for (Map.Entry<?, ?> value : values.entrySet()) {
-                report.append("| ")
-                        .append(escape(valueOf(value.getKey())))
-                        .append(" | ")
-                        .append(escape(valueOf(value.getValue())))
-                        .append(" |\n");
-            }
+            report.append("|===\n");
         }
     }
 
@@ -79,8 +78,7 @@ public final class MarkDownReporter implements Reporter {
 
 
     private String escape(String value) {
-        return value.replace("\\", "\\\\")
-                .replace("|", "\\|")
+        return value.replace("|", "\\|")
                 .replace("\r", " ")
                 .replace("\n", " ");
     }

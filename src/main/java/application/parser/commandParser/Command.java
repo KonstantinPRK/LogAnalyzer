@@ -1,8 +1,9 @@
 package application.parser.commandParser;
 
-public record Command (
+public record Command(
         String source,
         String fromDate,
         String toDate,
         String reportFormat
-) {}
+) {
+}

@@ -1,10 +1,11 @@
-package userInterface.Console;
+package application.userInterface.Console;
 
+import application.errorhandling.ErrorHandler;
 import application.parser.commandParser.Command;
 import application.parser.commandParser.CommandParser;
 import application.reporter.Report;
 import org.springframework.stereotype.Component;
-import userInterface.UserInterface;
+import application.userInterface.UserInterface;
 
 import java.util.Objects;
 
@@ -12,11 +13,15 @@ import java.util.Objects;
 public final class Console implements UserInterface {
     private final Terminal terminal;
     private final CommandParser commandParser;
+    private final ErrorHandler errorHandler;
 
-    public Console(Terminal terminal, CommandParser commandParser) {
+
+    public Console(Terminal terminal, CommandParser commandParser, ErrorHandler errorHandler) {
         this.terminal = Objects.requireNonNull(terminal, "terminal");
         this.commandParser = Objects.requireNonNull(commandParser, "commandParser");
+        this.errorHandler = Objects.requireNonNull(errorHandler, "errorHandler");
     }
+
 
     @Override
     public Command requestCommand() {
@@ -24,15 +29,17 @@ public final class Console implements UserInterface {
         return commandParser.parse(commandLine);
     }
 
+
     @Override
     public void displayReport(Report report) {
         Objects.requireNonNull(report, "report");
         terminal.printReport(report.formattedReport());
     }
 
+
     @Override
     public void displayError(Exception exception) {
         Objects.requireNonNull(exception, "exception");
-        terminal.printError(exception);
+        terminal.printError(errorHandler.handle(exception));
     }
 }
