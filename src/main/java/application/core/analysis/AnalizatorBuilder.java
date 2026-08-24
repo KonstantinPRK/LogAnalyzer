@@ -1,11 +1,11 @@
-package application.core.control;
+package application.core.analysis;
 
+import application.aggregator.StatisticAggregator;
 import application.factory.DateValidatorFactory;
-import application.aggregator.Aggregator;
-import application.collector.Collector;
 import application.factory.LoaderFactory;
 import application.factory.ReporterFactory;
 import application.loader.Loader;
+import application.parser.commandParser.Command;
 import org.springframework.stereotype.Component;
 import application.reporter.Reporter;
 import application.validator.DateChecker;
@@ -17,15 +17,14 @@ public class AnalizatorBuilder {
     ReporterFactory reporterFactory = new ReporterFactory();
 
 
-    public Analizator createAnalizator(UserParameters userParameters, SystemParameters systemParameters) {
-        Loader loader = loaderFactory.create(userParameters.source());
-        DateChecker dateChecker = dateValidatorFactory.create(userParameters.fromDate(), userParameters.toDate());
-        Reporter reporter = reporterFactory.create(userParameters.reportFormat());
+    public Analizator createAnalizator(Command command) {
+        Loader loader = loaderFactory.create(command.source());
+        DateChecker dateChecker = dateValidatorFactory.create(command.fromDate(), command.toDate());
+        Reporter reporter = reporterFactory.create(command.reportFormat());
 
-        Aggregator aggregator = systemParameters.aggregator();
-        Collector collector = systemParameters.logCollector();
 
-        return new Analizator(loader, dateChecker, aggregator, collector, reporter);
+
+        return new Analizator(loader, dateChecker, new StatisticAggregator(), reporter);
     }
 
 

@@ -1,13 +1,12 @@
-package application.core.control;
+package application.core.analysis;
 
 import application.aggregator.Aggregator;
 import application.aggregator.StatisticAggregator;
-import application.collector.Collector;
 import application.loader.FileLoader;
 import application.loader.Loader;
-import application.parser.LogParser;
-import application.parser.NGINXlog;
-import application.parser.NGINXparser;
+import application.parser.logParser.LogParser;
+import application.parser.logParser.NGINXlog;
+import application.parser.logParser.NGINXparser;
 import application.reporter.MarkDownReporter;
 import application.reporter.Reporter;
 import application.validator.DateChecker;
@@ -29,7 +28,7 @@ public class Analizator implements Runnable {
 
     LogParser logParser = new NGINXparser();
 
-    public Analizator(Loader loader, DateChecker dateChecker, Aggregator aggregator, Collector collector, Reporter reporter) {
+    public Analizator(Loader loader, DateChecker dateChecker, Aggregator aggregator, Reporter reporter) {
 
     }
 

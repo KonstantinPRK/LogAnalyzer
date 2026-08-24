@@ -1,4 +1,4 @@
-package application.parser;
+package application.parser.logParser;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;

@@ -1,6 +1,6 @@
-package application.core.control;
+package application.parser.commandParser;
 
-public record UserParameters (
+public record Command (
         String source,
         String fromDate,
         String toDate,

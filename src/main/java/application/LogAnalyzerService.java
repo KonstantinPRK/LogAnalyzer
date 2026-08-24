@@ -1,13 +1,11 @@
 package application;
 
-import application.aggregator.StatisticAggregator;
-import application.collector.CallCollector;
-import application.core.control.Analizator;
-import application.core.control.AnalizatorBuilder;
-import application.core.control.SystemParameters;
-import application.core.control.UserParameters;
-import application.parser.CommandParser;
-import application.parser.NGINXparser;
+
+import application.core.analysis.Analizator;
+import application.core.analysis.AnalizatorBuilder;
+import application.core.session.UserSession;
+
+import application.core.setting.SystemParameters;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -15,27 +13,44 @@ import java.util.Scanner;
 
 @Component
 public class LogAnalyzerService {
-    Scanner scan = new Scanner(System.in);
-    CommandParser commandParser = new CommandParser();
-    AnalizatorBuilder analizatorBuilder = new AnalizatorBuilder();
+    UserSession session;
+    AnalizatorBuilder analizatorBuilder;
+
+
+    public LogAnalyzerService(AnalizatorBuilder analizatorBuilder){
+        this.analizatorBuilder = analizatorBuilder;
+    }
 
 
     @PostConstruct
     public void start(){
-       String command = request();
-       UserParameters userParameters = commandParser.parse(command);
-       SystemParameters systemParameters = new SystemParameters(new StatisticAggregator(), new CallCollector(), new NGINXparser());
-       Analizator analizator = analizatorBuilder.createAnalizator(userParameters, systemParameters);
+       analyzeInteraction();
+    }
 
+    private void analyzeInteraction() {
+        while(session.isOpen()){
+            requestCommand(session);
+            analyze(session);
+            displayReport(session);
+        }
+    }
+
+
+
+
+    private void requestCommand(UserSession session){
+        session.requestCommand();
+    }
+
+    private void analyze(UserSession session) {
+        Analizator analizator = analizatorBuilder.createAnalizator(session.getCommand());
         analizator.run();
+
     }
 
-    private String request() {
-        System.out.println("Введите команду, например:");
-        System.out.println("analyzer --path logs/*.log --from 2024-08-31 --format markdown");
-        System.out.print("> ");
-        return scan.nextLine().trim(); // с удалением пробелов
+    private void displayReport(UserSession session) {
     }
+
 
 
 }
