@@ -23,7 +23,7 @@ public final class MarkDownReporter implements Reporter {
     private void appendScalarMetrics(StringBuilder report, Map<String, ?> statistics) {
         report.append("#### Общая информация\n\n")
                 .append("| Метрика | Значение |\n")
-                .append("|:--|--:|\n");
+                .append("| :--- | ---: |\n");
 
         boolean hasScalarMetrics = false;
         for (Map.Entry<String, ?> entry : statistics.entrySet()) {
@@ -55,7 +55,7 @@ public final class MarkDownReporter implements Reporter {
                     .append(escape(metric.getKey()))
                     .append("\n\n")
                     .append("| Значение | Количество |\n")
-                    .append("|:--|--:|\n");
+                    .append("| :--- | ---: |\n");
 
             if (values.isEmpty()) {
                 report.append("| ").append(EMPTY_VALUE).append(" | 0 |\n");

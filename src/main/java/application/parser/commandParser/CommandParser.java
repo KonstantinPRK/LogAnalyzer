@@ -9,21 +9,12 @@ import java.util.regex.Pattern;
 
 @Component
 public final class CommandParser {
-    private static final String COMMAND_NAME = "analyzer";
-
-
     public Command parse(String command) {
         if (Objects.isNull(command) || command.isBlank()) {
             throw new CommandParsingException("Команда анализа не задана");
         }
 
         String cleanCommand = command.trim();
-        if (!hasSupportedCommandName(cleanCommand)) {
-            throw new CommandParsingException(
-                    "Команда должна начинаться со слова " + COMMAND_NAME
-            );
-        }
-
         String source = extractParameter(cleanCommand, "--path");
         if (Objects.isNull(source) || source.isBlank()) {
             throw new CommandParsingException(
@@ -47,15 +38,5 @@ public final class CommandParser {
             return matcher.group(1);
         }
         return null;
-    }
-
-
-    private boolean hasSupportedCommandName(String command) {
-        int firstWhitespace = command.indexOf(' ');
-        String commandName = firstWhitespace < 0
-                ? command
-                : command.substring(0, firstWhitespace);
-
-        return COMMAND_NAME.equalsIgnoreCase(commandName);
     }
 }

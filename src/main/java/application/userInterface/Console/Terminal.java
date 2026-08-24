@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Component
 public final class Terminal {
-    private static final String COMMAND_REQUEST = "Введите команду, например:", COMMAND_EXAMPLE = "analyzer --path logs/*.log --from 2024-08-31 --format markdown", COMMAND_PROMPT = "> ", EMPTY_COMMAND_ERROR = "Ошибка: команда не может быть пустой";
+    private static final String COMMAND_REQUEST = "Введите команду, например:", COMMAND_EXAMPLE = "--path logs/*.log --from 2024-08-31 --format markdown", COMMAND_PROMPT = "> ", EMPTY_COMMAND_ERROR = "Ошибка: команда не может быть пустой";
     private final Input input;
     private final Output output;
 
@@ -35,7 +35,7 @@ public final class Terminal {
 
 
     public void printReport(String formattedReport) {
-        output.print(Objects.requireNonNull(formattedReport, "formattedReport"));
+        output.println(Objects.requireNonNull(formattedReport, "formattedReport"));
     }
 
 
