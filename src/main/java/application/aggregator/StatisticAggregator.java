@@ -2,34 +2,44 @@ package application.aggregator;
 
 import application.collector.Collector;
 import application.parser.logParser.NGINXlog;
+import application.report.LogStatistics;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-public final class StatisticAggregator implements Aggregator<NGINXlog> {
-    private final Map<String, Collector<NGINXlog, ?>> collectors;
+public final class StatisticAggregator implements Aggregator<NGINXlog, LogStatistics> {
+    private final Collector<NGINXlog, Long> totalRequestCollector, percentileCollector;
+    private final Collector<NGINXlog, Double> averageSizeCollector;
+    private final Collector<NGINXlog, Map<String, Long>> topResourceCollector;
+    private final Collector<NGINXlog, Map<Integer, Long>> topStatusCollector;
 
 
-    public StatisticAggregator(Map<String, Collector<NGINXlog, ?>> collectors) {
-        if (collectors.isEmpty()) {
-            throw new IllegalArgumentException("Коллекторы агрегатора не заданы");
-        }
-
-        this.collectors = Collections.unmodifiableMap(new LinkedHashMap<>(collectors));
+    public StatisticAggregator(Collector<NGINXlog, Long> totalRequestCollector, Collector<NGINXlog, Double> averageSizeCollector, Collector<NGINXlog, Long> percentileCollector, Collector<NGINXlog, Map<String, Long>> topResourceCollector, Collector<NGINXlog, Map<Integer, Long>> topStatusCollector) {
+        this.totalRequestCollector = totalRequestCollector;
+        this.averageSizeCollector = averageSizeCollector;
+        this.percentileCollector = percentileCollector;
+        this.topResourceCollector = topResourceCollector;
+        this.topStatusCollector = topStatusCollector;
     }
 
 
     @Override
     public void accept(NGINXlog log) {
-        collectors.values().forEach(collector -> collector.accept(log));
+        totalRequestCollector.accept(log);
+        averageSizeCollector.accept(log);
+        percentileCollector.accept(log);
+        topResourceCollector.accept(log);
+        topStatusCollector.accept(log);
     }
 
 
     @Override
-    public Map<String, ?> getResult() {
-        Map<String, Object> result = new LinkedHashMap<>();
-        collectors.forEach((name, collector) -> result.put(name, collector.getResult()));
-        return Collections.unmodifiableMap(result);
+    public LogStatistics getResult() {
+        return new LogStatistics(
+                totalRequestCollector.getResult(),
+                averageSizeCollector.getResult(),
+                percentileCollector.getResult(),
+                topResourceCollector.getResult(),
+                topStatusCollector.getResult()
+        );
     }
 }

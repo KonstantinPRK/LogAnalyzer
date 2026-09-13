@@ -1,15 +1,18 @@
 package application.errorhandling.exceptions;
 
-public final class SourceParsingException extends RuntimeException {
+import application.errorhandling.ApplicationException;
+import application.errorhandling.ErrorType;
+
+public final class SourceParsingException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
 
     public SourceParsingException(String message) {
-        super(message);
+        super(ErrorType.SOURCE, message);
     }
 
 
     public SourceParsingException(String message, Throwable cause) {
-        super(message, cause);
+        super(ErrorType.SOURCE, message, cause);
     }
 }

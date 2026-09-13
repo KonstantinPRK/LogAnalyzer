@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.net.http.HttpClient;
 import java.util.Locale;
-import java.util.Objects;
 
 @Component
 public final class LoaderFactory {
@@ -27,10 +26,6 @@ public final class LoaderFactory {
 
 
     public Loader create(String source) {
-        if (Objects.isNull(source) || source.isBlank()) {
-            throw new CommandParsingException("Источник логов не задан");
-        }
-
         String normalizedSource = source.trim();
         int schemeSeparator = normalizedSource.indexOf("://");
         if (schemeSeparator < 0) {

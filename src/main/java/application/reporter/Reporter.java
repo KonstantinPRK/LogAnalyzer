@@ -1,7 +1,7 @@
 package application.reporter;
 
-import java.util.Map;
+import application.report.LogReport;
 
 public interface Reporter {
-    Report create(Map<String, ?> statistics);
+    String format(LogReport report);
 }

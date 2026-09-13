@@ -2,27 +2,18 @@ package application.errorhandling;
 
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 public final class ErrorHandler {
     private static final String UNKNOWN_ERROR = "Внутренняя ошибка: причина не указана", UNEXPECTED_ERROR_PREFIX = "Внутренняя ошибка: ";
-    private final List<ErrorInterceptor> interceptors;
-
-
-    public ErrorHandler(List<ErrorInterceptor> interceptors) {
-        this.interceptors = List.copyOf(interceptors);
-    }
 
 
     public String handle(Exception exception) {
         Throwable current = exception;
         while (current instanceof Exception currentException) {
-            Optional<String> message = intercept(currentException);
-            if (message.isPresent()) {
-                return message.get();
+            if (currentException instanceof ApplicationException applicationException) {
+                return format(applicationException);
             }
 
             current = current.getCause();
@@ -32,15 +23,18 @@ public final class ErrorHandler {
     }
 
 
-    private Optional<String> intercept(Exception exception) {
-        for (ErrorInterceptor interceptor : interceptors) {
-            Optional<String> message = interceptor.intercept(exception);
-            if (message.isPresent()) {
-                return message;
-            }
-        }
+    private String format(ApplicationException exception) {
+        return prefix(exception.type()) + exception.getMessage();
+    }
 
-        return Optional.empty();
+
+    private String prefix(ErrorType type) {
+        return switch (type) {
+            case COMMAND -> "Ошибка команды: ";
+            case SOURCE -> "Ошибка источника логов: ";
+            case LOG_LOADING -> "Ошибка загрузки логов: ";
+            case LOG_PARSING -> "Ошибка формата лога: ";
+        };
     }
 
 

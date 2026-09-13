@@ -17,8 +17,8 @@ public final class ReporterFactory {
     }
 
 
-    public Reporter create(String reportFormat) {
-        return switch (Format.fromString(reportFormat)) {
+    public Reporter create(Format reportFormat) {
+        return switch (reportFormat) {
             case MARKDOWN -> markDownReporter;
             case ADOC -> asciiDocReporter;
         };

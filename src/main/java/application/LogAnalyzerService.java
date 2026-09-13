@@ -1,48 +1,61 @@
 package application;
 
-import application.core.analysis.LogAnalysisTask;
-import application.factory.LogAnalysisTaskFactory;
+import application.core.analysis.LogAnalyzer;
+import application.errorhandling.ErrorHandler;
+import application.factory.LogAnalyzerFactory;
+import application.factory.ReporterFactory;
 import application.parser.commandParser.Command;
-import application.reporter.Report;
-import application.core.session.UserSession;
+import application.parser.commandParser.CommandParser;
+import application.report.LogReport;
+import application.report.LogStatistics;
+import application.reporter.Reporter;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Component;
+
+import java.io.PrintStream;
 
 @Component
 public final class LogAnalyzerService {
-    private final UserSession session;
-    private final LogAnalysisTaskFactory analysisTaskFactory;
+    private final ApplicationArguments arguments;
+    private final CommandParser commandParser;
+    private final LogAnalyzerFactory logAnalyzerFactory;
+    private final ReporterFactory reporterFactory;
+    private final ErrorHandler errorHandler;
+    private final PrintStream output;
 
 
-    public LogAnalyzerService(UserSession session, LogAnalysisTaskFactory analysisTaskFactory) {
-        this.session = session;
-        this.analysisTaskFactory = analysisTaskFactory;
+    public LogAnalyzerService(ApplicationArguments arguments, CommandParser commandParser, LogAnalyzerFactory logAnalyzerFactory, ReporterFactory reporterFactory, ErrorHandler errorHandler, @Qualifier("consoleOutput") PrintStream output) {
+        this.arguments = arguments;
+        this.commandParser = commandParser;
+        this.logAnalyzerFactory = logAnalyzerFactory;
+        this.reporterFactory = reporterFactory;
+        this.errorHandler = errorHandler;
+        this.output = output;
     }
 
 
     @PostConstruct
     public void start() {
-        runSession(session);
-    }
-
-
-    private void runSession(UserSession session) {
-        while (session.isOpen()) {
-            analyze(session);
-        }
-    }
-
-
-    private void analyze(UserSession session) {
         try {
-            Command command = session.requestCommand();
-            LogAnalysisTask analysisTask = analysisTaskFactory.create(command);
-            Report report = analysisTask.call();
+            Command command = commandParser.parse(arguments.getSourceArgs());
+            LogAnalyzer logAnalyzer = logAnalyzerFactory.create(command);
+            LogStatistics statistics = logAnalyzer.analyze();
+            LogReport report = new LogReport(
+                    command.source(),
+                    command.fromDate(),
+                    command.toDate(),
+                    statistics
+            );
+            Reporter reporter = reporterFactory.create(command.reportFormat());
 
-            session.displayReport(report);
+            output.println(reporter.format(report));
         } catch (Exception exception) {
-            session.displayError(exception);
+            output.println(errorHandler.handle(exception));
+        } finally {
+            output.flush();
         }
     }
 }

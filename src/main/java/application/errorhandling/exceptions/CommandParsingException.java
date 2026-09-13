@@ -1,15 +1,18 @@
 package application.errorhandling.exceptions;
 
-public final class CommandParsingException extends RuntimeException {
+import application.errorhandling.ApplicationException;
+import application.errorhandling.ErrorType;
+
+public final class CommandParsingException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
 
     public CommandParsingException(String message) {
-        super(message);
+        super(ErrorType.COMMAND, message);
     }
 
 
     public CommandParsingException(String message, Throwable cause) {
-        super(message, cause);
+        super(ErrorType.COMMAND, message, cause);
     }
 }

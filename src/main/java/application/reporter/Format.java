@@ -2,6 +2,7 @@ package application.reporter;
 
 import application.errorhandling.exceptions.CommandParsingException;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public enum Format {
@@ -13,7 +14,7 @@ public enum Format {
             return MARKDOWN;
         }
 
-        return switch (format.trim().toLowerCase()) {
+        return switch (format.trim().toLowerCase(Locale.ROOT)) {
             case "markdown", "md" -> MARKDOWN;
             case "adoc", "asciidoc" -> ADOC;
             default -> throw new CommandParsingException(

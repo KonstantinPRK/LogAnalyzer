@@ -1,15 +1,18 @@
 package application.errorhandling.exceptions;
 
-public final class LogLoadingException extends RuntimeException {
+import application.errorhandling.ApplicationException;
+import application.errorhandling.ErrorType;
+
+public final class LogLoadingException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
 
     public LogLoadingException(String message) {
-        super(message);
+        super(ErrorType.LOG_LOADING, message);
     }
 
 
     public LogLoadingException(String message, Throwable cause) {
-        super(message, cause);
+        super(ErrorType.LOG_LOADING, message, cause);
     }
 }

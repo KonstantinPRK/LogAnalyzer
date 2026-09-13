@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public final class NGINXparser implements LogParser<NGINXlog> {
     private static final int MAX_LINE_PREVIEW_LENGTH = 120;
     private static final Pattern LOG_PATTERN = Pattern.compile(
-            "^(\\S+) \\S+ \\S+ \\[([^\\]]+)\\] \"(\\S+) (\\S+) \\S+\" (\\d{3}) (\\d+)(?: \"([^\"]*)\" \"([^\"]*)\")?$"
+            "^(\\S+) \\S+ (\\S+) \\[([^\\]]+)\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\d+)(?: \"([^\"]*)\" \"([^\"]*)\")?$"
     );
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH);
@@ -36,24 +36,28 @@ public final class NGINXparser implements LogParser<NGINXlog> {
         }
 
         try {
-            String ip = matcher.group(1);
-            String timestampText = matcher.group(2);
-            String method = matcher.group(3);
-            String resource = matcher.group(4);
-            int status = Integer.parseInt(matcher.group(5));
-            long bodyBytesSent = Long.parseLong(matcher.group(6));
-            String referer = matcher.group(7);
-            String userAgent = matcher.group(8);
+            String remoteAddress = matcher.group(1);
+            String remoteUser = matcher.group(2);
+            String timestampText = matcher.group(3);
+            String method = matcher.group(4);
+            String resource = matcher.group(5);
+            String protocol = matcher.group(6);
+            int status = Integer.parseInt(matcher.group(7));
+            long bodyBytesSent = Long.parseLong(matcher.group(8));
+            String referer = matcher.group(9);
+            String userAgent = matcher.group(10);
             OffsetDateTime timestamp = OffsetDateTime.parse(
                     timestampText,
                     DATE_FORMATTER
             );
 
             return new NGINXlog(
-                    ip,
+                    remoteAddress,
+                    remoteUser,
                     timestamp,
                     method,
                     resource,
+                    protocol,
                     status,
                     bodyBytesSent,
                     referer,

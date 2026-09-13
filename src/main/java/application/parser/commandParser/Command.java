@@ -1,9 +1,13 @@
 package application.parser.commandParser;
 
+import application.reporter.Format;
+
+import java.time.LocalDate;
+
 public record Command(
         String source,
-        String fromDate,
-        String toDate,
-        String reportFormat
+        LocalDate fromDate,
+        LocalDate toDate,
+        Format reportFormat
 ) {
 }
