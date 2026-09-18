@@ -1,4 +1,4 @@
-package application.parser.sourceParser;
+package application.parser.source;
 
 import application.errorhandling.exceptions.SourceParsingException;
 import org.springframework.stereotype.Component;
@@ -13,36 +13,61 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * Разбирает локальный путь, директорию или glob-шаблон
+ * в список файлов.
+ */
 @Component
 public final class FileSourceParser implements SourceParser<List<Path>> {
     private static final String GLOB_CHARACTERS = "*?[{";
 
 
+    /**
+     * Создает парсер локальных источников логов.
+     */
+    public FileSourceParser() {
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Path> parse(String source) {
         String normalizedSource = requireSource(source);
 
         try {
             Path sourcePath = Path.of(normalizedSource);
-            if (!containsGlob(normalizedSource)) {
-                return parseLiteralSource(sourcePath);
-            }
+            if (!containsGlob(normalizedSource)) return parseLiteralSource(sourcePath);
 
             return parseGlobSource(sourcePath);
+
         } catch (InvalidPathException exception) {
-            throw new SourceParsingException("Некорректный локальный источник: " + source, exception);
+            throw new SourceParsingException(
+                    "Некорректный локальный источник: " + source,
+                    exception
+            );
+
         } catch (SecurityException exception) {
-            throw new SourceParsingException("Нет доступа к локальному источнику: " + source, exception);
+            throw new SourceParsingException(
+                    "Нет доступа к локальному источнику: " + source,
+                    exception
+            );
+
         }
     }
 
 
+    /**
+     * Разбирает путь без glob-символов.
+     *
+     * @param sourcePath путь к файлу или директории
+     * @return найденные обычные файлы
+     */
     private List<Path> parseLiteralSource(Path sourcePath) {
         Path absolutePath = sourcePath.toAbsolutePath().normalize();
 
-        if (Files.isRegularFile(absolutePath)) {
-            return List.of(absolutePath);
-        }
+        if (Files.isRegularFile(absolutePath)) return List.of(absolutePath);
 
         if (Files.isDirectory(absolutePath)) {
             return walkRegularFiles(absolutePath, null, sourcePath.toString());
@@ -52,6 +77,13 @@ public final class FileSourceParser implements SourceParser<List<Path>> {
     }
 
 
+    /**
+     * Разбирает glob-шаблон и выполняет поиск
+     * от его неизменяемого корня.
+     *
+     * @param sourcePattern glob-шаблон
+     * @return подходящие обычные файлы
+     */
     private List<Path> parseGlobSource(Path sourcePattern) {
         Path absolutePattern = sourcePattern.toAbsolutePath().normalize();
         Path searchRoot = findSearchRoot(absolutePattern);
@@ -65,17 +97,28 @@ public final class FileSourceParser implements SourceParser<List<Path>> {
         PathMatcher matcher;
         try {
             matcher = FileSystems.getDefault().getPathMatcher("glob:" + absolutePattern);
+
         } catch (IllegalArgumentException exception) {
             throw new SourceParsingException(
                     "Некорректный glob-шаблон: " + sourcePattern,
                     exception
             );
+
         }
 
         return walkRegularFiles(searchRoot, matcher, sourcePattern.toString());
     }
 
 
+    /**
+     * Рекурсивно находит обычные файлы
+     * и при необходимости фильтрует их шаблоном.
+     *
+     * @param searchRoot корневая директория поиска
+     * @param matcher glob-фильтр или {@code null}
+     * @param sourceDescription описание источника для сообщений об ошибках
+     * @return отсортированный список найденных файлов
+     */
     private List<Path> walkRegularFiles(
             Path searchRoot,
             PathMatcher matcher,
@@ -96,22 +139,30 @@ public final class FileSourceParser implements SourceParser<List<Path>> {
             }
 
             return result;
+
         } catch (IOException exception) {
             throw new SourceParsingException(
-                    "Не удалось просмотреть локальный источник: " + sourceDescription,
+                    "Не удалось просмотреть локальный источник: "
+                            + sourceDescription,
                     exception
             );
+
         }
     }
 
 
+    /**
+     * Определяет часть glob-пути,
+     * предшествующую первому специальному символу.
+     *
+     * @param absolutePattern абсолютный glob-шаблон
+     * @return корневая директория поиска
+     */
     private Path findSearchRoot(Path absolutePattern) {
         Path searchRoot = absolutePattern.getRoot();
 
         for (Path part : absolutePattern) {
-            if (containsGlob(part.toString())) {
-                break;
-            }
+            if (containsGlob(part.toString())) break;
 
             searchRoot = searchRoot.resolve(part);
         }
@@ -120,17 +171,28 @@ public final class FileSourceParser implements SourceParser<List<Path>> {
     }
 
 
+    /**
+     * Проверяет наличие поддерживаемых glob-символов.
+     *
+     * @param value проверяемая строка
+     * @return {@code true}, если строка содержит glob-символ
+     */
     private boolean containsGlob(String value) {
         for (int index = 0; index < value.length(); index++) {
-            if (GLOB_CHARACTERS.indexOf(value.charAt(index)) >= 0) {
-                return true;
-            }
+            if (GLOB_CHARACTERS.indexOf(value.charAt(index)) >= 0) return true;
         }
 
         return false;
     }
 
 
+    /**
+     * Проверяет наличие описания локального источника
+     * и нормализует его.
+     *
+     * @param source исходное описание источника
+     * @return нормализованное описание
+     */
     private String requireSource(String source) {
         if (Objects.isNull(source) || source.isBlank()) {
             throw new SourceParsingException("Источник локальных логов не задан");

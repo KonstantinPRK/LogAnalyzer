@@ -2,8 +2,25 @@ package application.http;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Сопоставляет числовой HTTP-статус
+ * с его стандартным английским названием.
+ */
 @Component
 public final class HttpStatusNameResolver {
+    /**
+     * Создает преобразователь названий HTTP-статусов.
+     */
+    public HttpStatusNameResolver() {
+    }
+
+
+    /**
+     * Возвращает название переданного HTTP-статуса.
+     *
+     * @param status числовой HTTP-статус
+     * @return стандартное название или {@code Unknown}
+     */
     public String resolve(int status) {
         return switch (status) {
             case 100 -> "Continue";

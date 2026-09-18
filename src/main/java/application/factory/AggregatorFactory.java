@@ -1,25 +1,42 @@
 package application.factory;
 
 import application.aggregator.Aggregator;
-import application.aggregator.StatisticAggregator;
-import application.collector.AverageSizeCollector;
-import application.collector.PercentileCollector;
-import application.collector.TopResourceCollector;
-import application.collector.TopStatusCollector;
-import application.collector.TotalRequestCollector;
-import application.parser.logParser.NGINXlog;
+import application.aggregator.StatisticsAggregator;
+import application.collector.AverageResponseSizeCollector;
+import application.collector.RequestCountCollector;
+import application.collector.ResourceFrequencyCollector;
+import application.collector.ResponseSizePercentileCollector;
+import application.collector.StatusFrequencyCollector;
+import application.parser.log.NGINXlog;
 import application.report.LogStatistics;
 import org.springframework.stereotype.Component;
 
+/**
+ * Создает агрегатор и новый набор коллекторов
+ * для отдельного анализа.
+ */
 @Component
 public final class AggregatorFactory {
+    /**
+     * Создает фабрику агрегаторов статистики.
+     */
+    public AggregatorFactory() {
+    }
+
+
+    /**
+     * Создает агрегатор всех поддерживаемых
+     * статистических показателей.
+     *
+     * @return новый агрегатор статистики
+     */
     public Aggregator<NGINXlog, LogStatistics> create() {
-        return new StatisticAggregator(
-                new TotalRequestCollector(),
-                new AverageSizeCollector(),
-                new PercentileCollector(),
-                new TopResourceCollector(),
-                new TopStatusCollector()
+        return new StatisticsAggregator(
+                new RequestCountCollector(),
+                new AverageResponseSizeCollector(),
+                new ResponseSizePercentileCollector(),
+                new ResourceFrequencyCollector(),
+                new StatusFrequencyCollector()
         );
     }
 }
