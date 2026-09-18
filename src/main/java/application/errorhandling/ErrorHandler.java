@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public final class ErrorHandler {
-    private static final String UNKNOWN_ERROR = "Внутренняя ошибка: причина не указана", UNEXPECTED_ERROR_PREFIX = "Внутренняя ошибка: ";
+public class ErrorHandler {
+    private static final String
+            UNKNOWN_ERROR = "Внутренняя ошибка: причина не указана",
+            UNEXPECTED_ERROR_PREFIX = "Внутренняя ошибка: ";
 
 
     public String handle(Exception exception) {

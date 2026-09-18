@@ -41,7 +41,9 @@ public final class LogAnalyzerService {
     public void start() {
         try {
             Command command = commandParser.parse(arguments.getSourceArgs());
+
             LogAnalyzer logAnalyzer = logAnalyzerFactory.create(command);
+
             LogStatistics statistics = logAnalyzer.analyze();
             LogReport report = new LogReport(
                     command.source(),
@@ -49,13 +51,17 @@ public final class LogAnalyzerService {
                     command.toDate(),
                     statistics
             );
+
             Reporter reporter = reporterFactory.create(command.reportFormat());
 
             output.println(reporter.format(report));
+
         } catch (Exception exception) {
             output.println(errorHandler.handle(exception));
+
         } finally {
             output.flush();
+
         }
     }
 }

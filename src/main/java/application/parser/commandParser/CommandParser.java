@@ -9,11 +9,10 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 @Component
 public final class CommandParser {
-    private static final Set<String> SUPPORTED_PARAMETERS = Set.of("--path", "--from", "--to", "--format");
+    private static final String PATH = "--path", FROM = "--from", TO = "--to", FORMAT = "--format";
 
 
     public Command parse(String[] arguments) {
@@ -22,18 +21,19 @@ public final class CommandParser {
         }
 
         Map<String, String> options = parseOptions(arguments);
-        String source = options.get("--path");
+
+        String source = options.get(PATH);
         if (Objects.isNull(source) || source.isBlank()) {
             throw new CommandParsingException(
-                    "Не задан обязательный параметр --path"
+                    "Не задан обязательный параметр " + PATH
             );
         }
 
-        LocalDate fromDate = parseDate(options.get("--from"), "--from");
-        LocalDate toDate = parseDate(options.get("--to"), "--to");
+        LocalDate fromDate = parseDate(options.get(FROM), FROM);
+        LocalDate toDate = parseDate(options.get(TO), TO);
         validateDateRange(fromDate, toDate);
 
-        Format reportFormat = Format.fromString(options.get("--format"));
+        Format reportFormat = Format.fromString(options.get(FORMAT));
 
         return new Command(source.trim(), fromDate, toDate, reportFormat);
     }
@@ -43,27 +43,17 @@ public final class CommandParser {
         Map<String, String> options = new HashMap<>();
 
         for (int index = 0; index < arguments.length; index++) {
-            String argument = arguments[index];
-            int separatorIndex = argument.indexOf('=');
-            String parameter = separatorIndex < 0
-                    ? argument
-                    : argument.substring(0, separatorIndex);
+            String parameter = arguments[index];
 
-            if (!SUPPORTED_PARAMETERS.contains(parameter)) {
+            if (!isSupported(parameter)) {
                 throw new CommandParsingException("Неизвестный параметр: " + parameter);
             }
 
-            String value;
-            if (separatorIndex >= 0) {
-                value = argument.substring(separatorIndex + 1);
-            } else {
-                if (index + 1 >= arguments.length || arguments[index + 1].startsWith("--")) {
-                    throw new CommandParsingException("Не задано значение параметра " + parameter);
-                }
-
-                value = arguments[++index];
+            if (index + 1 >= arguments.length || arguments[index + 1].startsWith("--")) {
+                throw new CommandParsingException("Не задано значение параметра " + parameter);
             }
 
+            String value = arguments[++index];
             if (value.isBlank()) {
                 throw new CommandParsingException("Не задано значение параметра " + parameter);
             }
@@ -74,6 +64,14 @@ public final class CommandParser {
         }
 
         return options;
+    }
+
+
+    private boolean isSupported(String parameter) {
+        return switch (parameter) {
+            case PATH, FROM, TO, FORMAT -> true;
+            default -> false;
+        };
     }
 
 
@@ -97,7 +95,7 @@ public final class CommandParser {
     private void validateDateRange(LocalDate fromDate, LocalDate toDate) {
         if (Objects.nonNull(fromDate) && Objects.nonNull(toDate) && fromDate.isAfter(toDate)) {
             throw new CommandParsingException(
-                    "Дата --from не может быть позднее даты --to"
+                    "Дата " + FROM + " не может быть позднее даты " + TO
             );
         }
     }
